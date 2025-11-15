@@ -1,0 +1,8 @@
+[tools]
+zig = '0.15.2'
+
+[tasks.scratch]
+run = """
+mkdir -p ./bin
+zig cc ./scratch/main.c -o ./bin/scratch
+"""
