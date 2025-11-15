@@ -1,0 +1,4 @@
+[tools]
+node = '24.6.0'
+deno = 'latest'
+bun = 'latest'
