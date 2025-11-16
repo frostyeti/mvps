@@ -55,6 +55,13 @@
   <Folder Name="/Lodi/test/">
     <Project Path="Lodi/test/FrostYeti.Lodi.Tests.csproj" />
   </Folder>
+  <Folder Name="/Secrets.OperatingSystem/" />
+  <Folder Name="/Secrets.OperatingSystem/src/">
+    <Project Path="Secrets.OperatingSystem/src/FrostYeti.Secrets.OperatingSystem.csproj" />
+  </Folder>
+  <Folder Name="/Secrets.OperatingSystem/test/">
+    <Project Path="Secrets.OperatingSystem/test/FrostYeti.Secrets.OperatingSystem.Tests.csproj" />
+  </Folder>
   <Folder Name="/Secrets/" />
   <Folder Name="/Secrets/src/">
     <Project Path="Secrets/src/FrostYeti.Secrets.csproj" />
