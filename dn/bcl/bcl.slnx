@@ -13,4 +13,11 @@
   <Folder Name="/Core/test/">
     <Project Path="Core/test/FrostYeti.Core.Tests.csproj" />
   </Folder>
+  <Folder Name="/Crypto/" />
+  <Folder Name="/Crypto/src/">
+    <Project Path="Crypto/src/FrostYeti.Crypto.csproj" />
+  </Folder>
+  <Folder Name="/Crypto/test/">
+    <Project Path="Crypto/test/FrostYeti.Crypto.Tests.csproj" />
+  </Folder>
 </Solution>
