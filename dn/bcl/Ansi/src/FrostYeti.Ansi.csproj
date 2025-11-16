@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>
+    <TargetFrameworks>$(Fx)</TargetFrameworks>
+    <RootNamespace>FrostYeti</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>FrostYeti Ansi Color Terminal</PackageTags>
+    <Description>
+        FrostYeti.Ansi provides basic terminal color detection and ansi escape
+        codes for styling colors and formatting text in console applications.
+    </Description>
+    <PackageReleaseNotes Condition="Exists('$(MSBuildProjectDirectory)/CHANGELOG.md')">
+      $([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))
+    </PackageReleaseNotes>
+    <PackageLicenseFile Condition="Exists('$(LicensePath)')">LICENSE.md</PackageLicenseFile>
+    <PackageIcon>logo.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Condition="Exists('README.md')" Include="README.md" Pack="true" PackagePath=""/>
+    <None Condition="Exists('$(LicensePath)')" Include="$(LicensePath)" Pack="true" PackagePath=""/>
+    <None Condition="Exists('$(IconPath)')" Include="$(IconPath)" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+      <AssemblyAttribute Include="System.CLSCompliant">
+          <_Parameter1>true</_Parameter1>
+          <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(CmnDir)/ffi/win32/Libs.cs" Link="FFI/Win32/Libs.cs" />
+    <Compile Include="$(CmnDir)/ffi/win32/kernel32/GetConsoleMode.cs" Link="FFI/Win32/Kernel32/GetConsoleMode.cs" />
+    <Compile Include="$(CmnDir)/ffi/win32/kernel32/GetStdHandle.cs" Link="FFI/Win32/Kernel32/GetStdHandle.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(BclDir)/Colors.Primitives/src/*.csproj" />
+  </ItemGroup>
+</Project>
