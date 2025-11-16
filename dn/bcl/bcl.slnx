@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Core/" />
+  <Folder Name="/Core/src/">
+    <Project Path="Core/src/FrostYeti.Core.csproj" />
+  </Folder>
+  <Folder Name="/Core/test/">
+    <Project Path="Core/test/FrostYeti.Core.Tests.csproj" />
+  </Folder>
+</Solution>
