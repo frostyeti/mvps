@@ -34,6 +34,13 @@
   <Folder Name="/Crypto/test/">
     <Project Path="Crypto/test/FrostYeti.Crypto.Tests.csproj" />
   </Folder>
+  <Folder Name="/DotEnv/" />
+  <Folder Name="/DotEnv/src/">
+    <Project Path="DotEnv/src/FrostYeti.DotEnv.csproj" />
+  </Folder>
+  <Folder Name="/DotEnv/test/">
+    <Project Path="DotEnv/test/FrostYeti.DotEnv.Tests.csproj" />
+  </Folder>
   <Folder Name="/Exec/" />
   <Folder Name="/Exec/src/">
     <Project Path="Exec/src/FrostYeti.Exec.csproj" />
