@@ -1,4 +1,11 @@
 <Solution>
+  <Folder Name="/Colors.Primitives/" />
+  <Folder Name="/Colors.Primitives/src/">
+    <Project Path="Colors.Primitives/src/FrostYeti.Colors.Primitives.csproj" />
+  </Folder>
+  <Folder Name="/Colors.Primitives/test/">
+    <Project Path="Colors.Primitives/test/ForstYeti.Colors.Primitives.Tests.csproj" />
+  </Folder>
   <Folder Name="/Core/" />
   <Folder Name="/Core/src/">
     <Project Path="Core/src/FrostYeti.Core.csproj" />
