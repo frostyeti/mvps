@@ -41,6 +41,13 @@
   <Folder Name="/Exec/test/">
     <Project Path="Exec/test/FrostYeti.Exec.Tests.csproj" />
   </Folder>
+  <Folder Name="/Lodi/" />
+  <Folder Name="/Lodi/src/">
+    <Project Path="Lodi/src/FrostYeti.Lodi.csproj" />
+  </Folder>
+  <Folder Name="/Lodi/test/">
+    <Project Path="Lodi/test/FrostYeti.Lodi.Tests.csproj" />
+  </Folder>
   <Folder Name="/Secrets/" />
   <Folder Name="/Secrets/src/">
     <Project Path="Secrets/src/FrostYeti.Secrets.csproj" />
