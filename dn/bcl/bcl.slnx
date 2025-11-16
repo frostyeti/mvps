@@ -69,4 +69,11 @@
   <Folder Name="/Secrets/test/">
     <Project Path="Secrets/test/FrostYeti.Secrets.Tests.csproj" />
   </Folder>
+  <Folder Name="/Shell/" />
+  <Folder Name="/Shell/src/">
+    <Project Path="Shell/src/FrostFire.Shell.csproj" />
+  </Folder>
+  <Folder Name="/Shell/test/">
+    <Project Path="Shell/test/FrostFire.Shell.Tests.csproj" />
+  </Folder>
 </Solution>
