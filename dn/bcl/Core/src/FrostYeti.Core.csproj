@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>
+    <TargetFrameworks>$(Fx)</TargetFrameworks>
+    <RootNamespace>FrostYeti</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>Result FileSystem BCL FrostYeti Env Environment</PackageTags>
+    <Description>
+        FrostYeti.Core extends the the .NET Base Class Library 
+        with missing key functionality such as Result type, 
+        Posix file system operations, enhanced env variables
+        operations, and more.
+    </Description>
+    <PackageReleaseNotes Condition="Exists('$(MSBuildProjectDirectory)/CHANGELOG.md')">
+      $([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))
+    </PackageReleaseNotes>
+    <PackageLicenseFile Condition="Exists('$(LicensePath)')">LICENSE.md</PackageLicenseFile>
+    <PackageIcon>hyprx_logo_256.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Condition="Exists('README.md')" Include="README.md" Pack="true" PackagePath=""/>
+    <None Condition="Exists('$(LicensePath)')" Include="$(LicensePath)" Pack="true" PackagePath=""/>
+    <None Condition="Exists('$(IconPath)')" Include="$(IconPath)" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <AssemblyAttribute Include="System.CLSCompliant">
+          <_Parameter1>true</_Parameter1>
+          <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(CmnDir)/ffi/unix/libc/chown.cs" Link="FFI/Unix/chown.cs" />
+    <Compile Include="$(CmnDir)/ffi/unix/libc/chmod.cs" Link="FFI/Unix/chmod.cs" />
+    <Compile Include="$(CmnDir)/ffi/unix/libc/getgrgid.cs" Link="FFI/Unix/getgrgid.cs" />
+    <Compile Include="$(CmnDir)/ffi/unix/system.native/stat.cs" Link="FFI/Unix/stat.cs" />
+    <Compile Include="$(CmnDir)/ffi/unix/errors.cs" Link="FFI/Unix/Errors.cs" />
+    <Compile Include="$(CmnDir)/ffi/unix/system.native/getpwuid.cs" Link="FFI/Unix/getpwuid.cs" />
+    <Compile Include="$(CmnDir)/ffi/unix/libs.cs" Link="FFI/Unix/Libs.cs" />
+  </ItemGroup>
+</Project>

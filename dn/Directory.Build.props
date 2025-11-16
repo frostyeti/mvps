@@ -29,6 +29,7 @@
     <MacOs>false</MacOs>
     <RootDir>$(MSBuildThisFileDirectory.TrimEnd("/"))</RootDir>
     <CmnDir>$(MSBuildThisFileDirectory)cmn/src</CmnDir>
+    <BclDir>$(MSBuildThisFileDirectory)bcl</BclDir>
     <IconPath>$(MSBuildThisFileDirectory)eng/assets/FrostYeti_logo_256.png</IconPath>
     <LicensePath>$(MSBuildThisFileDirectory)/LICENSE.md</LicensePath>
     <NetLegacy>false</NetLegacy>
