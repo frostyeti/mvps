@@ -1,0 +1,66 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageVersionOverrideEnabled>true</CentralPackageVersionOverrideEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.0" />
+    <PackageVersion Include="AsyncFixer" Version="1.6.0" />
+    <PackageVersion Include="EFCore.NamingConventions" Version="10.0.0-rc.1" />
+    <PackageVersion Include="FrostYeti.Core" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Exec" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Ansi" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.DotEnv" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.DotEnv.Expansion" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Lodi" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Secrets" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Secrets.OperatingSystem" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Shell" Version="[0.0.0-alpha.3,)" />
+    <PackageVersion Include="FrostYeti.Rex.Console" Version="[0.0.0-alpha.0,)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.SpaProxy" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.9.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.0" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="MySql.EntityFrameworkCore" Version="10.0.0-preview" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-rc.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
+    <PackageVersion Include="Polyfill" Version="7.33.0" />
+    <PackageVersion Include="ReflectionAnalyzers" Version="0.3.1" />
+    <PackageVersion Include="SecurityCodeScan.VS2019" Version="5.6.7" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.10.0.116381" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta5.25306.1" />
+    <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <PackageVersion Include="System.Memory.Data" Version="9.0.5" />
+    <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+    <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="10.0.0-preview.5.25277.114" />
+    <PackageVersion Include="Text.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="xunit.v3" Version="2.0.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
+  </ItemGroup>
+</Project>

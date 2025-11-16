@@ -2,12 +2,9 @@
     "extensions": {
         "recommendations": []
     },
-    "settings": {
-        "deno.enable": true
-    },
     "folders": [
         {
-            "name": "go",
+            "name": "dotnet",
             "path": "."
         },
         {
