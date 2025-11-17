@@ -1,0 +1,446 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "$id": "runfile.schema.json",
+    "title": "Runfile",
+    "description": "A task in the runfile",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of the task"
+        },
+        "description": {
+            "type": "string",
+            "description": "A brief description of the task"
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "substitution": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Disable command substitution in xtaskfile"
+                },
+                "shell": {
+                    "type": "string",
+                    "enum": [
+                        "bash",
+                        "pwsh",
+                        "python",
+                        "powershell",
+                        "sh",
+                        "node",
+                        "bun",
+                        "deno",
+                        "ruby"
+                    ],
+                    "description": "The shell to use for running commands in the task"
+                },
+                "env": {
+                    "$ref": "#/definitions/env",
+                    "description": "Environment variables to set for the command"  
+                },
+                "context": {
+                    "type": "string",
+                    "description": "The default context to use for the tasks"
+                },
+                "prepend-paths": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "A directory to add to the PATH environment variable"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string",
+                                        "description": "A directory to add to the PATH environment variable"
+                                    },
+                                    "os": {
+                                        "type": "string",
+                                        "enum": ["linux", "darwin", "windows"],
+                                        "description": "Whether to prepend or append the path"
+                                    }
+                                },
+                                "required": ["path"]
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "windows": {
+                                        "type": "string",
+                                        "description": "A directory to add to the PATH environment variable on Windows"
+                                    }
+                                }
+                            }, 
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "linux": {
+                                        "type": "string",
+                                        "description": "A directory to add to the PATH environment variable on Linux"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "darwin": {
+                                        "type": "string",
+                                        "description": "A directory to add to the PATH environment variable on macOS"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "dirs": {
+                    "type": "object",
+                    "properties": {
+                        "bin": {
+                            "type": "string",
+                            "description": "The path to the bin directory",
+                            "default": "./.xtask/bin"
+                        },
+                        "etc": {
+                            "type": "string",
+                            "description": "The path to the etc directory",
+                            "default": "./.xtask/etc"
+                        },
+                        "scripts": {
+                            "type": "string",
+                            "description": "The path to the scripts directory",
+                            "default": "./.xtask/scripts"
+                        },
+                        "apps": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "description": "The path to an apps directory"
+                            },
+                            "default": ["./.xtask/apps"],
+                            "description": "A list of paths to apps directories."
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+ 
+        "env": {
+             "$ref": "#/definitions/env",
+            "description": "Environment variables to set for the command"
+        },
+        "dotenv": {
+            "type":"array",
+            "items": {
+                "type": "string"
+            },
+            "description": "A list of .env files to load before running the task"
+        },
+        "hosts": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[a-zA-Z0-9_-]+$": {
+                            "anyOf": [
+                                {
+                                    "type": "string",
+                                    "description": "Host in the format of 'user@host[:port]'"
+                                },
+                                {
+                                    "type": "object",
+                                    "$ref": "#/definitions/host"
+                                }
+                            ]
+                        }
+                    },
+                    "description": "A map of host names or IP addresses"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "An import using a relative path for an xhostfile."
+                            },
+                            {
+                                "type": "object",
+                                "$ref": "#/definitions/host"
+                            }
+                        ]
+                    },
+                    "description": "A list of hosts in the format of 'user@host[:port]' or host objects"
+                }
+            ]
+        },
+       
+        "tasks": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9_-]|([a-zA-Z0-9_-]:[a-zA-Z0-9_-]+)$": {
+                   "anyOf": [
+                        {
+                            "$ref": "#/definitions/task"
+                        },
+                        {
+                            "type": "string",
+                            "description": "A task name that refers to another task"
+                        }
+                    ]
+                }
+            },
+            "description": "A map of task names to task definitions"
+        }
+    },
+    "definitions": {
+        "env": {
+            "anyOf": [
+                {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "The environment variable in the format of 'NAME=VALUE'"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "The name of the environment variable"
+                                    },
+                                    "value": {
+                                        "type": "string",
+                                        "description": "The value of the environment variable"
+                                    },
+                                    "secret": {
+                                        "type": "boolean",
+                                        "description": "Whether the environment variable is a secret",
+                                        "default": false
+                                    }
+                                }
+                            }
+                        ]
+                    }
+               }
+            ]
+        },
+        "task": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the task"
+                },
+                "desc": {
+                    "type": "string",
+                    "description": "A brief description of the task"
+                },
+                "env": {
+                    "$ref": "#/definitions/env",
+                    "description": "Environment variables to set for the task"
+                },
+                "dotenv": {
+                    "type":"array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": ".env files to load before running the task"
+                },
+                "uses": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "bash",
+                                "pwsh",
+                                "python",
+                                "powershell",
+                                "sh",
+                                "node",
+                                "bun",
+                                "deno",
+                                "ruby",
+                                "ssh",
+                                "scp",
+                                "tmpl"
+                            ],
+                            "description": "The type of command to run"
+                        },
+                        {
+                            "type": "string",
+                            "description": "A custom command to run, e.g., a script or executable",
+                            "pattern": "^(scp?|ssh?|tmpl?|docker)://.*"
+                        }
+                    ]
+                },
+                "run": {
+                    "type": "string",
+                    "description": "The command to run for this task"
+                },
+                "timeout": {
+                    "type": "string",
+                    "pattern": "^[0-9]+(s|m|h)?$",
+                    "description": "Timeout in seconds for the task (e.g., '30s', '2m', '1h')"
+                },
+                "needs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9_-:]+$"
+                    },
+                    "description": "A list of tasks that this task depends on"
+                },
+                "hosts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9_-:.]+$"
+                    },
+                    "description": "A list of the names of hosts to run this task on"
+                },
+                "with": {
+                    "type": "object",
+                    "properties": {
+                        "files": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A list of files to copy (for scp tasks) in the format of 'source:destination'"
+                        }
+                    },
+                    "description": "Additional parameters for the task",
+                    "additionalProperties": {
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array"
+                        ]
+                    }
+                }
+            }
+        },
+        "host": {
+            "type": "object",
+            "required": [
+                "host",
+                "user"
+            ],
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "description": "The cname or ip of the host"
+                },
+                "user": {
+                    "type": "string",
+                    "description": "The user to connect as"
+                },
+                "os": {
+                    "type": "object",
+                    "properties": {
+                        "platform": {
+                            "oneOf": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "linux",
+                                        "darwin",
+                                        "windows"
+                                    ]
+                                },
+                                {
+                                    "type": "null"
+                                },
+                                {
+                                    "type": "string",
+                                    "description": "Custom platform string"
+                                }
+                            ]
+                        },
+                        "arch": {
+                            "oneOf": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "amd64",
+                                        "arm64",
+                                        "386"
+                                    ]
+                                },
+                                {
+                                    "type": "null"
+                                },
+                                {
+                                    "type": "string",
+                                    "description": "Custom architecture string"
+                                }
+                            ]
+                        },
+                        "codename": {
+                            "type": "string",
+                            "description": "The codename of the OS"
+                        },
+                        "variant": {
+                            "type": "string",
+                            "description": "The variant of the OS, e.g., 'Windows Server'"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the OS"
+                        }
+                    }
+                },
+                "identity": {
+                    "type": "string",
+                    "description": "The identity file for SSH connections"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "The environment variable that contains the password for SSH connections"
+                },
+                "port": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "description": "The port number for the host"
+                },
+                "meta": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "description": "Additional metadata for the host"
+                },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of groups the host belongs to"
+                }
+            }
+        }
+    }
+}
