@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azsecrets"
+	"github.com/frostyeti/mvps/go/secrets"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,16 @@ type SecretImport struct {
 	ExpiresAt *time.Time        `json:"expiresAt,omitempty"`
 	NotBefore *time.Time        `json:"notBefore,omitempty"`
 	Enabled   *bool             `json:"enabled,omitempty"`
+
+	// Secret generation options
+	Ensure    bool   `json:"ensure,omitempty"`    // If true and value is empty and doesn't exist, generate secret
+	Size      int    `json:"size,omitempty"`      // Password size (default: 32)
+	NoUpper   bool   `json:"noUpper,omitempty"`   // Exclude uppercase letters
+	NoLower   bool   `json:"noLower,omitempty"`   // Exclude lowercase letters
+	NoDigits  bool   `json:"noDigits,omitempty"`  // Exclude digits
+	NoSpecial bool   `json:"noSpecial,omitempty"` // Exclude special characters
+	Special   string `json:"special,omitempty"`   // Custom special characters
+	Chars     string `json:"chars,omitempty"`     // Custom character set (overrides all other options)
 }
 
 // importCmd represents the import command
@@ -32,11 +43,19 @@ The JSON file should contain an object where each property represents a secret.
 Property values can be either:
   1. A string (simple secret value)
   2. An object with the following properties:
-     - value: The secret value (required)
+     - value: The secret value (optional if ensure=true)
      - tags: Key-value pairs of tags (optional)
      - expiresAt: Expiration timestamp (optional)
      - notBefore: Not-before timestamp (optional)
      - enabled: Whether the secret is enabled (optional)
+     - ensure: If true and value is empty and doesn't exist, generate secret (optional)
+     - size: Generated password size, default 32 (optional)
+     - noUpper: Exclude uppercase letters from generated password (optional)
+     - noLower: Exclude lowercase letters from generated password (optional)
+     - noDigits: Exclude digits from generated password (optional)
+     - noSpecial: Exclude special characters from generated password (optional)
+     - special: Custom special characters for generated password (optional)
+     - chars: Custom character set, overrides all other options (optional)
 
 Examples:
   # Import secrets from a file
@@ -56,6 +75,14 @@ Example JSON format:
       },
       "expiresAt": "2026-12-31T23:59:59Z",
       "enabled": true
+    },
+    "generated-secret": {
+      "ensure": true,
+      "size": 32,
+      "noSpecial": true,
+      "tags": {
+        "generated": "true"
+      }
     }
   }`,
 
@@ -148,9 +175,54 @@ Example JSON format:
 		failCount := 0
 
 		for name, secretImport := range secrets {
+			// Handle ensure logic: if ensure=true, value is empty, and secret doesn't exist, generate it
+			secretValue := secretImport.Value
+
+			if secretImport.Ensure && secretValue == "" {
+				// Check if secret already exists
+				_, err := client.GetSecret(cmd.Context(), name, "", nil)
+				if err != nil {
+					// Secret doesn't exist, generate it
+					size := secretImport.Size
+					if size == 0 {
+						size = 32 // Default size
+					}
+
+					generated, genErr := generateSecretWithOptions(
+						size,
+						secretImport.NoUpper,
+						secretImport.NoLower,
+						secretImport.NoDigits,
+						secretImport.NoSpecial,
+						secretImport.Special,
+						secretImport.Chars,
+					)
+
+					if genErr != nil {
+						cmd.PrintErrf("Error generating secret for %s: %v\n", name, genErr)
+						failCount++
+						continue
+					}
+
+					secretValue = generated
+					fmt.Fprintf(os.Stderr, "Generated secret for %s\n", name)
+				} else {
+					// Secret exists, skip
+					fmt.Fprintf(os.Stderr, "Secret %s already exists, skipping generation\n", name)
+					continue
+				}
+			}
+
+			// Validate that we have a value to set
+			if secretValue == "" {
+				cmd.PrintErrf("Error: secret %s has no value and ensure is not enabled or generation failed\n", name)
+				failCount++
+				continue
+			}
+
 			// Build secret parameters
 			params := azsecrets.SetSecretParameters{
-				Value: &secretImport.Value,
+				Value: &secretValue,
 			}
 
 			// Set attributes if provided
@@ -197,4 +269,33 @@ func InitImport(secretsCmd, rootCmd *cobra.Command) {
 
 	importCmd.Flags().StringP("file", "f", "", "Input JSON file path")
 	importCmd.Flags().Bool("stdin", false, "Read JSON from stdin")
+}
+
+// generateSecretWithOptions generates a secret using the provided options
+func generateSecretWithOptions(size int, noUpper, noLower, noDigits, noSpecial bool, special, chars string) (string, error) {
+	builder := secrets.NewOptionsBuilder()
+	builder.WithSize(int16(size))
+	builder.WithRetries(100)
+
+	if chars != "" {
+		// If chars is specified, use only those characters
+		builder.WithChars(chars)
+	} else {
+		// Otherwise, build character set from flags
+		builder.WithUpper(!noUpper)
+		builder.WithLower(!noLower)
+		builder.WithDigits(!noDigits)
+
+		if noSpecial {
+			builder.WithNoSymbols()
+		} else if special != "" {
+			builder.WithSymbols(special)
+		} else {
+			// Default special characters
+			builder.WithSymbols("@_-{}|#!`~:^")
+		}
+	}
+
+	opts := builder.Build()
+	return opts.Generate()
 }
