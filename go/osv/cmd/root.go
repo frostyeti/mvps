@@ -1,6 +1,5 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -9,8 +8,6 @@ import (
 
 	"github.com/spf13/cobra"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -45,7 +42,11 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	flags := rootCmd.PersistentFlags()
+
+	service := os.Getenv("OSV_SERVICE")
+	if service == "" {
+		service = "osv"
+	}
+	flags.String("service", service, "The keyring service name")
 }
-
-
