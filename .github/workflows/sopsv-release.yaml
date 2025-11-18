@@ -37,7 +37,7 @@ jobs:
           distribution: goreleaser
           # 'latest', 'nightly', or a semver
           version: "~> v2"
-          args: release --clean --skip 
+          args: release --clean --skip chocolatey
           workdir: go/sopsv
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
