@@ -11,6 +11,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// toScreamingSnakeCase converts a string to SCREAMING_SNAKE_CASE
+func toScreamingSnakeCase(input string) string {
+	output := ""
+	for i, char := range input {
+		if char >= 'A' && char <= 'Z' {
+			if i > 0 {
+				output += "_"
+			}
+			output += string(char)
+		} else if char >= 'a' && char <= 'z' {
+			if i > 0 && input[i-1] >= 'A' && input[i-1] <= 'Z' {
+				output += "_"
+			}
+			output += string(char - ('a' - 'A'))
+		} else if char >= '0' && char <= '9' {
+			output += string(char)
+		} else {
+			if i > 0 && input[i-1] != '_' {
+				output += "_"
+			}
+		}
+	}
+	return output
+}
+
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -78,18 +103,18 @@ Examples:
 
 		case "sh", "bash", "zsh":
 			for k, v := range values {
-				fmt.Printf("export %s='%s'\n", k, v)
+				fmt.Printf("export %s='%s'\n", toScreamingSnakeCase(k), v)
 			}
 
 		case "powershell", "pwsh":
 			for k, v := range values {
-				fmt.Printf("$Env:%s = '%s'\n", k, v)
+				fmt.Printf("$Env:%s = '%s'\n", toScreamingSnakeCase(k), v)
 			}
 
 		case "dotenv", "env", ".env":
 			doc := dotenv.NewDocument()
 			for k, v := range values {
-				doc.Set(k, v)
+				doc.Set(toScreamingSnakeCase(k), v)
 			}
 			fmt.Println(doc.String())
 
