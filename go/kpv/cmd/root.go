@@ -1,6 +1,5 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -9,8 +8,6 @@ import (
 
 	"github.com/spf13/cobra"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -45,7 +42,17 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	flags := rootCmd.PersistentFlags()
+
+	vault := os.Getenv("KPV_VAULT")
+	flags.String("vault", vault, "The KeePass vault name or path")
+
+	uri := os.Getenv("KPV_VAULT_URI")
+	flags.String("url", uri, "The KeePass vault file URI")
+
+	password := os.Getenv("KPV_PASSWORD")
+	flags.String("password", password, "The KeePass vault password")
+
+	passwordFile := os.Getenv("KPV_PASSWORD_FILE")
+	flags.String("password-file", passwordFile, "Path to file containing the KeePass vault password")
 }
-
-

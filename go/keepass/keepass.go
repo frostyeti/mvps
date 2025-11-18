@@ -489,11 +489,11 @@ func (kdbx *Kdbx) UpsertEntry(path string, cb func(entry *Entry)) *Entry {
 		group := kdbx.Root()
 
 		if len(group.Entries) > 0 {
-			for _, entry := range group.Entries {
-				title := entry.GetTitle()
+			for i := range group.Entries {
+				title := group.Entries[i].GetTitle()
 				if strings.EqualFold(title, name) {
 					e := &Entry{
-						&entry, group,
+						&group.Entries[i], group,
 					}
 					cb(e)
 
@@ -545,11 +545,11 @@ func (kdbx *Kdbx) UpsertEntry(path string, cb func(entry *Entry)) *Entry {
 		}
 	}
 
-	for _, entry := range group.Entries {
-		title := entry.GetTitle()
+	for i := range group.Entries {
+		title := group.Entries[i].GetTitle()
 		if strings.EqualFold(title, name) {
 			e := &Entry{
-				&entry,
+				&group.Entries[i],
 				group,
 			}
 			cb(e)
