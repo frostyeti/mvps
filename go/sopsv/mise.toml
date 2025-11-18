@@ -1,0 +1,6 @@
+
+[tasks.build]
+run = """
+go build -o bin/sopsv ./main.go
+cp ./bin/sopsv $HOME/.local/bin/sopsv
+"""
