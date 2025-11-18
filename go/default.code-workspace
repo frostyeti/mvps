@@ -3,7 +3,10 @@
         "recommendations": []
     },
     "settings": {
-        "deno.enable": true
+        "deno.enable": true,
+        "yaml.schemas": {
+            "https://goreleaser.com/static/schema.json" : "**/.goreleaser.yaml"
+        }
     },
     "folders": [
         {
