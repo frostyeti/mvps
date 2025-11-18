@@ -7,6 +7,8 @@ on:
     # run only against tags
     tags:
       - "go/sopsv/v*"
+    branches-ignore:
+      - "*"
 
 permissions:
   contents: write
@@ -35,6 +37,8 @@ jobs:
           distribution: goreleaser
           # 'latest', 'nightly', or a semver
           version: "~> v2"
-          args: release --clean --skip chocolatey
+          args: release --clean --skip 
+          workdir: go/sopsv
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
