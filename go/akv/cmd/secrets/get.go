@@ -16,13 +16,27 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get <key>...",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Get one or more secrets from Azure Key Vault",
+	Long: `Get one or more secrets from Azure Key Vault.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+By default, secrets are output in plain text, one per line.
+Use the --format flag to specify other output formats.
+
+Examples:
+  # Get a single secret
+  akv get --key my-secret
+
+  # Get multiple secrets
+  akv get --key secret1 --key secret2
+
+  # Get secrets with positional arguments
+  akv get secret1 secret2
+
+  # Get secrets in JSON format
+  akv get --key my-secret --format json
+
+  # Get secrets as environment variables for bash
+  akv get --key my-secret --format bash`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		uri, _ := cmd.Flags().GetString("url")
@@ -157,6 +171,10 @@ to quickly create a Cobra application.`,
 func InitGet(secretsCmd, rootCmd *cobra.Command) {
 	secretsCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(getCmd)
+
+	flags := getCmd.Flags()
+	flags.StringSliceP("key", "k", []string{}, "Name of secret(s) to get (can be specified multiple times)")
+	flags.StringP("format", "f", "text", "Output format: text, json, sh, bash, zsh, powershell, pwsh, dotenv, env, .env, github, azure-pipelines")
 
 	// Here you will define your flags and configuration settings.
 

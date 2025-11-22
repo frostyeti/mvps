@@ -75,16 +75,18 @@ Examples:
 
 		l := len(args)
 		if l > 0 {
-
 			if len(args[0]) > 0 {
-				key2 := args[0]
-				key = key2
+				key = args[0]
 			}
 
 			if l > 1 && len(args[1]) > 0 {
-				value2 := args[1]
-				value = value2
+				value = args[1]
 			}
+		}
+
+		if key == "" {
+			cmd.PrintErrf("Error: --key or <key> must be provided\n")
+			os.Exit(1)
 		}
 
 		// Validate that exactly one input method is specified
@@ -234,7 +236,6 @@ func InitSet(secretsCmd, rootCmd *cobra.Command) {
 	rootCmd.AddCommand(setCmd)
 
 	setCmd.Flags().String("key", "", "The name of the secret to set (required)")
-	setCmd.MarkFlagRequired("key")
 
 	setCmd.Flags().String("value", "", "The secret value (exclusive with --file, --var, --stdin, --generate)")
 	setCmd.Flags().String("file", "", "Path to file containing the secret value (exclusive with --value, --var, --stdin, --generate)")

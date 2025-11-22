@@ -24,17 +24,18 @@ standard glob syntax including wildcards (* and ?).
 
 Examples:
   # List all secrets
-  akv ls
+  akv ls -v vault-name
+
+
 
   # List secrets matching a pattern
-  akv ls "app-*"
+  akv ls -v vault-name "app-*"
 
   # List secrets with wildcards
-  akv ls "*-prod"
-  akv ls "db-*-password"
-
+  akv ls -v vault-name "*-prod"
+  akv ls -v vault-name "db-*-password"
   # List secrets using the alias
-  akv list "api-key-*"`,
+  akv list -v vault-name "api-key-*"`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		uri, _ := cmd.Flags().GetString("url")

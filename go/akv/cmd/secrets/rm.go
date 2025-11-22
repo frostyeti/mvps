@@ -49,7 +49,7 @@ Examples:
 
 		// Validate that at least one key is provided
 		if len(keys) == 0 {
-			cmd.PrintErrf("Error: at least one --key must be provided\n")
+			cmd.PrintErrf("Error: at least one --key or <key> must be provided\n")
 			return
 		}
 
@@ -139,7 +139,6 @@ func InitRm(secretsCmd, rootCmd *cobra.Command) {
 	rootCmd.AddCommand(rmCmd)
 
 	rmCmd.Flags().StringSliceP("key", "k", []string{}, "Name of secret(s) to remove (can be specified multiple times)")
-	rmCmd.MarkFlagRequired("key")
 
 	rmCmd.Flags().Bool("purge", false, "Permanently purge the secret after deletion (cannot be recovered)")
 	rmCmd.Flags().BoolP("yes", "y", false, "Skip confirmation prompt")
