@@ -3,11 +3,17 @@ name: sopsv-release
 
 on:
   pull_request:
+    paths:
+      - "go/sopsv/**"
+    branches:
+      - "*"
   push:
+    paths:
+      - "go/sopsv/**"
     # run only against tags
     tags:
       - "go/sopsv/v*"
-    branches-ignore:
+    branches:
       - "*"
 
 permissions:
@@ -41,6 +47,7 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/go/sopsv/v}
           echo "$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+        if: ${{ github.ref_type == 'tag' }}
       - name: Build 
         run: |
           mkdir -p dist/linux/amd64
@@ -80,6 +87,7 @@ jobs:
           tar -czvf ${APP}-darwin-amd64-v${VERSION}.tar.gz darwin/amd64/${APP}
           tar -czvf ${APP}-darwin-arm64-v${VERSION}.tar.gz darwin/arm64/${APP}          
         working-directory: go/sopsv/
+        if: ${{ github.ref_type == 'tag' }}
         
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -92,6 +100,7 @@ jobs:
             ./go/sopsv/dist/${APP}-windows-amd64-v${VERSION}.zip
             ./go/sopsv/dist/${APP}-windows-arm64-v${VERSION}.zip
             ./go/sopsv/dist/${APP}-darwin-amd64-v${VERSION}.tar.gz
-            ./go/sopsv/dist/${APP}-darwin-arm64-v${VERSION}.tar.gz
+            ./go/sopsv/dist/${APP}-darwin-arm64-v${VERSION}.tar.
+        if: ${{ github.ref_type == 'tag' }}
 
         
