@@ -11,17 +11,19 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "osv",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:     "osv",
+	Version: Version,
+	Short:   "operating system vault",
+	Long: `osv is a tool for managing secrets with Windows, macOS, and Linux OS keyrings.
+	
+On Windows, it uses the Credential Manager.
+On macOS, it uses the Keychain.
+On Linux, it uses the Secret Service API (via D-Bus).`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -46,7 +48,9 @@ func init() {
 
 	service := os.Getenv("OSV_SERVICE")
 	if service == "" {
-		service = "osv"
+		service = "login"
 	}
-	flags.String("service", service, "The keyring service name")
+
+	flags.StringP("vault", "v", service, "The keyring vault. An alias for --service")
+	flags.StringP("service", "s", service, "The keyring service name")
 }

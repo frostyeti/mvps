@@ -13,7 +13,7 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get",
+	Use:   "get <key>...",
 	Short: "Get one or more secrets from the keyring",
 	Long: `Get one or more secrets from the OS keyring.
 
@@ -36,6 +36,10 @@ Examples:
 	Run: func(cmd *cobra.Command, args []string) {
 		keys, _ := cmd.Flags().GetStringSlice("key")
 		format, _ := cmd.Flags().GetString("format")
+
+		if len(args) > 0 {
+			keys = append(keys, args...)
+		}
 
 		if format == "" {
 			format = "text"
@@ -78,18 +82,21 @@ Examples:
 
 		case "sh", "bash", "zsh":
 			for k, v := range values {
-				fmt.Printf("export %s='%s'\n", k, v)
+				key := toScreamingSnakeCase(k)
+				fmt.Printf("export %s='%s'\n", key, v)
 			}
 
 		case "powershell", "pwsh":
 			for k, v := range values {
-				fmt.Printf("$Env:%s = '%s'\n", k, v)
+				key := toScreamingSnakeCase(k)
+				fmt.Printf("$Env:%s = '%s'\n", key, v)
 			}
 
 		case "dotenv", "env", ".env":
 			doc := dotenv.NewDocument()
 			for k, v := range values {
-				doc.Set(k, v)
+				key := toScreamingSnakeCase(k)
+				doc.Set(key, v)
 			}
 			fmt.Println(doc.String())
 

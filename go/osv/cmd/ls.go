@@ -63,8 +63,6 @@ Examples:
 			cmd.PrintErrf("Error listing secrets: %v\n", err)
 			return
 		}
-
-		count := len(keys)
 		matchCount := 0
 
 		for _, key := range keys {
@@ -79,11 +77,10 @@ Examples:
 			fmt.Println(key)
 		}
 
-		// Print summary to stderr so it doesn't interfere with piping
-		if filterPattern != "" {
-			fmt.Fprintf(os.Stderr, "\nShowing %d of %d secrets (filtered by: %s)\n", matchCount, count, filterPattern)
+		if matchCount == 0 {
+			os.Exit(1)
 		} else {
-			fmt.Fprintf(os.Stderr, "\nTotal secrets: %d\n", count)
+			os.Exit(0)
 		}
 	},
 }

@@ -44,9 +44,9 @@ jobs:
       - name: Get Version From Tag
         shell: bash
         run: |
-          # go/sopsv/v0.0.0 
+          # go/venv/v0.0.0 
           # in bash trim the prefix to get the version only
-          VERSION=${GITHUB_REF#refs/tags/go/sopsv/v}
+          VERSION=${GITHUB_REF#refs/tags/go/venv/v}
           echo "$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
         if: ${{ github.ref_type == 'tag' }}
@@ -77,7 +77,7 @@ jobs:
           go build -o "dist/darwin/amd64/${APP}" ./main.go
           GOARCH=arm64
           go build -o "dist/darwin/arm64/${APP}" ./main.go            
-        working-directory: go/sopsv
+        working-directory: go/venv
     
       - name: Archive
         run: |
@@ -88,7 +88,7 @@ jobs:
           zip -r ${APP}-windows-arm64-v${VERSION}.zip windows/arm64/${APP}.exe
           tar -czvf ${APP}-darwin-amd64-v${VERSION}.tar.gz darwin/amd64/${APP}
           tar -czvf ${APP}-darwin-arm64-v${VERSION}.tar.gz darwin/arm64/${APP}          
-        working-directory: go/sopsv/
+        working-directory: go/venv
         if: ${{ github.ref_type == 'tag' }}
         
       - name: Create Release
@@ -98,7 +98,7 @@ jobs:
         with:
           name: ${{ env.APP }}-v${{ env.VERSION }}
           files: |
-            ./go/sopsv/dist/sopsv-*
+            ./go/venv/dist/venv-*
         if: ${{ github.ref_type == 'tag' }}
 
         

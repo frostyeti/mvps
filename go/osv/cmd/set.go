@@ -15,16 +15,20 @@ import (
 
 // setCmd represents the set command
 var setCmd = &cobra.Command{
-	Use:   "set",
+	Use:   "set <key> [<value>]",
 	Short: "Set a secret in the keyring",
 	Long: `Set a single secret value in the OS keyring.
+
+The key can be provided as a positional argument or via the --key flag.
+The value can be provided by a positional argument or through one of several options
 
 The value can be provided through one of five exclusive options:
   --value      Provide the value directly on the command line
   --file       Read the value from a file
   --var        Read the value from an environment variable
   --stdin      Read the value from standard input
-  --generate   Generate a random secret value
+  --generate   Generate a random secret 
+  
 
 When using --generate, additional options control the generated secret:
   --size       Size of the secret in characters (default: 16)
@@ -58,6 +62,14 @@ Examples:
 		varName, _ := cmd.Flags().GetString("var")
 		stdin, _ := cmd.Flags().GetBool("stdin")
 		generate, _ := cmd.Flags().GetBool("generate")
+
+		l := len(args)
+		if l > 0 {
+			key = args[0]
+			if l > 1 {
+				value = args[1]
+			}
+		}
 
 		// Validate that exactly one input method is specified
 		inputMethods := 0

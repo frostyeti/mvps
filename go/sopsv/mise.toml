@@ -24,3 +24,4 @@ zip -j dist/sopsv-windows-arm64.zip dist/windows/arm64/sopsv.exe
 tar -czvf dist/sopsv-darwin-amd64.tar.gz -C dist/darwin/amd64 sopsv
 tar -czvf dist/sopsv-darwin-arm64.tar.gz -C dist/darwin/arm64 sopsv
 """
+
