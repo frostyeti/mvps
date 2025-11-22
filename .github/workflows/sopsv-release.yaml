@@ -96,6 +96,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: ${{ env.APP }}-v${{ env.VERSION }}
           files: |
             ./go/sopsv/dist/sopsv-*
         if: ${{ github.ref_type == 'tag' }}
