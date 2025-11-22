@@ -1,0 +1,104 @@
+# .github/workflows/release.yml
+name: akv
+
+on:
+  pull_request:
+    paths:
+      - "go/akv/**"
+      - ".github/workflows/akv.yaml"
+    branches:
+      - "*"
+  push:
+    paths:
+      - "go/akv/**"
+      - ".github/workflows/akv.yaml"
+    # run only against tags
+    tags:
+      - "go/akv/v*"
+    branches:
+      - "*"
+
+permissions:
+  contents: write
+  # packages: write
+  # issues: write
+  # id-token: write
+
+env:
+  APP: akv
+
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.4"
+          
+      - name: Get Version From Tag
+        shell: bash
+        run: |
+          # go/akv/v0.0.0 
+          # in bash trim the prefix to get the version only
+          VERSION=${GITHUB_REF#refs/tags/go/akv/v}
+          echo "$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        if: ${{ github.ref_type == 'tag' }}
+      - name: Build 
+        run: |
+          mkdir -p dist/linux/amd64
+          mkdir -p dist/linux/arm64
+          mkdir -p dist/windows/amd64
+          mkdir -p dist/windows/arm64
+          mkdir -p dist/darwin/amd64
+          mkdir -p dist/darwin/arm64
+
+          GOARCH=amd64
+          GOOS=linux
+
+          go build -o "dist/linux/amd64/${APP}" ./main.go
+          GOARCH=arm64
+          go build -o "dist/linux/arm64/${APP}" ./main.go
+
+          GOOS=windows
+          GOARCH=amd64
+          go build -o "dist/windows/amd64/${APP}.exe" ./main.go
+          GOARCH=arm64
+          go build -o "dist/windows/arm64/${APP}.exe" ./main.go
+          
+          GOOS=darwin
+          GOARCH=amd64
+          go build -o "dist/darwin/amd64/${APP}" ./main.go
+          GOARCH=arm64
+          go build -o "dist/darwin/arm64/${APP}" ./main.go            
+        working-directory: go/akv
+    
+      - name: Archive
+        run: |
+          cd dist
+          tar -czvf ${APP}-linux-amd64-v${VERSION}.tar.gz linux/amd64/${APP}
+          tar -czvf ${APP}-linux-arm64-v${VERSION}.tar.gz linux/arm64/${APP}
+          zip -r ${APP}-windows-amd64-v${VERSION}.zip windows/amd64/${APP}.exe
+          zip -r ${APP}-windows-arm64-v${VERSION}.zip windows/arm64/${APP}.exe
+          tar -czvf ${APP}-darwin-amd64-v${VERSION}.tar.gz darwin/amd64/${APP}
+          tar -czvf ${APP}-darwin-arm64-v${VERSION}.tar.gz darwin/arm64/${APP}          
+        working-directory: go/akv/
+        if: ${{ github.ref_type == 'tag' }}
+        
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ env.APP }}-v${{ env.VERSION }}
+          files: |
+            ./go/akv/dist/akv-*
+        if: ${{ github.ref_type == 'tag' }}
+
+        
