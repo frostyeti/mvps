@@ -30,6 +30,7 @@ jobs:
           go-version: "1.25.4"
           
       - name: Get Tag Version
+        shell: bash
         run: |
           # go/sopsv/v0.0.0 
           # in bash trim the prefix to get the version only
@@ -39,7 +40,7 @@ jobs:
       # More assembly might be required: Docker logins, GPG, etc.
       # It all depends on your needs.
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@
+        uses: goreleaser/goreleaser-action@v6
         with:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
