@@ -99,6 +99,23 @@ func getCredential(cmd *cobra.Command) (azcore.TokenCredential, error) {
 	cli, _ := cmd.Flags().GetBool("use-cli")
 	deviceCode, _ := cmd.Flags().GetBool("use-device-code")
 
+	vault, _ := cmd.Flags().GetString("vault")
+	uri, err := url.Parse(vault)
+	name := ""
+	if err != nil {
+		name = vault
+	} else {
+		hostParts := strings.Split(uri.Host, ".")
+		if len(hostParts) > 0 {
+			name = hostParts[0]
+		}
+	}
+
+	clientIdKey := fmt.Sprintf("akv:%s:%s", name, "client-id")
+	clientSecretKey := fmt.Sprintf("akv:%s:%s", name, "client-secret")
+	tenantIdKey := fmt.Sprintf("akv:%s:%s", name, "tenant-id")
+	managedIdKey := fmt.Sprintf("akv:%s:%s", name, "managed-identity")
+
 	if cli {
 		return azidentity.NewAzureCLICredential(nil)
 	}
@@ -115,7 +132,17 @@ func getCredential(cmd *cobra.Command) (azcore.TokenCredential, error) {
 		}
 
 		if useKr {
-			item, err := kr.Get("managed-identity")
+			item, err := kr.Get(managedIdKey)
+			if err != nil {
+				item2, err2 := kr.Get("akv:managed-identity")
+				if err2 == nil {
+					clientId := string(item2.Data)
+					return azidentity.NewManagedIdentityCredential(&azidentity.ManagedIdentityCredentialOptions{
+						ID: azidentity.ClientID(clientId),
+					})
+				}
+			}
+
 			if err == nil {
 				clientId := string(item.Data)
 				return azidentity.NewManagedIdentityCredential(&azidentity.ManagedIdentityCredentialOptions{
@@ -131,9 +158,23 @@ func getCredential(cmd *cobra.Command) (azcore.TokenCredential, error) {
 
 		if useKr {
 			if clientSecret == "" {
-				item, err := kr.Get(clientId)
+				item, err := kr.Get(clientIdKey)
 				if err == nil {
 					clientSecret = string(item.Data)
+				}
+			}
+
+			if clientId == "" {
+				item, err := kr.Get(clientSecretKey)
+				if err == nil {
+					clientId = string(item.Data)
+				}
+			}
+
+			if tenantId == "" {
+				item, err := kr.Get(tenantIdKey)
+				if err == nil {
+					tenantId = string(item.Data)
 				}
 			}
 		}
@@ -158,7 +199,9 @@ func getCredential(cmd *cobra.Command) (azcore.TokenCredential, error) {
 
 func openKeyring() (keyring.Keyring, error) {
 	kr, err := keyring.Open(keyring.Config{
-		ServiceName: "akv",
+		ServiceName:             "login",
+		LibSecretCollectionName: "login",
+		KeychainName:            "login",
 		AllowedBackends: []keyring.BackendType{
 			keyring.KeychainBackend,
 			keyring.WinCredBackend,

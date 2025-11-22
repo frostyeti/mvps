@@ -15,7 +15,7 @@ import (
 
 // rmCmd represents the rm command
 var rmCmd = &cobra.Command{
-	Use:     "rm",
+	Use:     "rm <key>...",
 	Aliases: []string{"remove"},
 	Short:   "Remove one or more secrets from Azure Key Vault",
 	Long: `Remove (delete) one or more secrets from Azure Key Vault.
@@ -42,6 +42,10 @@ Examples:
 		keys, _ := cmd.Flags().GetStringSlice("key")
 		purge, _ := cmd.Flags().GetBool("purge")
 		yes, _ := cmd.Flags().GetBool("yes")
+
+		if len(args) > 0 {
+			keys = append(keys, args...)
+		}
 
 		// Validate that at least one key is provided
 		if len(keys) == 0 {

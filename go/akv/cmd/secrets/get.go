@@ -15,7 +15,7 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get",
+	Use:   "get <key>...",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -28,6 +28,10 @@ to quickly create a Cobra application.`,
 		uri, _ := cmd.Flags().GetString("url")
 		vault, _ := cmd.Flags().GetString("vault")
 		secrets, _ := cmd.Flags().GetStringSlice("key")
+
+		if len(args) > 0 {
+			secrets = append(secrets, args...)
+		}
 
 		format, _ := cmd.Flags().GetString("format")
 		if format == "" {

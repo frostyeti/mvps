@@ -1,0 +1,27 @@
+
+[tasks.build]
+run = """
+go build -o bin/akv ./main.go
+cp ./bin/akv $HOME/.local/bin/akv
+"""
+
+[tasks.build-all]
+run = """
+GOOS=linux GOARCH=amd64 go build -o dist/linux/amd64/akv ./main.go
+GOOS=linux GOARCH=arm64 go build -o dist/linux/arm64/akv ./main.go
+GOOS=windows GOARCH=amd64 go build -o dist/windows/amd64/akv.exe ./main.go
+GOOS=windows GOARCH=arm64 go build -o dist/windows/arm64/akv.exe ./main.go
+GOOS=darwin GOARCH=amd64 go build -o dist/darwin/amd64/akv ./main.go
+GOOS=darwin GOARCH=arm64 go build -o dist/darwin/arm64/akv ./main.go
+"""
+
+[tasks.archive]
+run = """
+tar -czvf dist/akv-linux-amd64.tar.gz -C dist/linux/amd64 akv
+tar -czvf dist/akv-linux-arm64.tar.gz -C dist/linux/arm64 akv
+zip -j dist/akv-windows-amd64.zip dist/windows/amd64/akv.exe
+zip -j dist/akv-windows-arm64.zip dist/windows/arm64/akv.exe
+tar -czvf dist/akv-darwin-amd64.tar.gz -C dist/darwin/amd64 akv
+tar -czvf dist/akv-darwin-arm64.tar.gz -C dist/darwin/arm64 akv
+"""
+

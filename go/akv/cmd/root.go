@@ -79,5 +79,4 @@ func init() {
 	flags.String("tenant-id", tenantId, "The Azure Tenant ID to use for authentication")
 	flags.String("client-id", clientId, "The Azure Client ID to use for authentication")
 	flags.String("client-secret", clientSecret, "The Azure Client Secret to use for authentication")
-
 }

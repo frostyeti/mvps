@@ -15,7 +15,7 @@ import (
 
 // setCmd represents the set command
 var setCmd = &cobra.Command{
-	Use:   "set",
+	Use:   "set [<key>] [<value>]",
 	Short: "Set a secret in Azure Key Vault",
 	Long: `Set a single secret value in Azure Key Vault.
 
@@ -36,6 +36,11 @@ When using --generate, additional options control the generated secret:
   --chars      Use only these specific characters (overrides other character options)
 
 Examples:
+  # Set a secret with positional arguments
+  akv set -v my-keyvault secret value
+  akv set secret value
+  akv set secret --file ./secret.txt
+
   # Set a secret with a value from command line
   akv set --key my-secret --value "secret-value"
 
@@ -68,6 +73,17 @@ Examples:
 		stdin, _ := cmd.Flags().GetBool("stdin")
 		generate, _ := cmd.Flags().GetBool("generate")
 
+		l := len(args)
+		if l > 0 {
+			if len(args[0]) > 0 {
+				key = args[0]
+			}
+
+			if l > 1 && len(args[1]) > 0 {
+				value = args[1]
+			}
+		}
+
 		// Validate that exactly one input method is specified
 		inputMethods := 0
 		if value != "" {
@@ -88,25 +104,25 @@ Examples:
 
 		if inputMethods == 0 {
 			cmd.PrintErrf("Error: must specify exactly one of --value, --file, --var, --stdin, or --generate\n")
-			return
+			os.Exit(1)
 		}
 
 		if inputMethods > 1 {
 			cmd.PrintErrf("Error: options --value, --file, --var, --stdin, and --generate are mutually exclusive\n")
-			return
+			os.Exit(1)
 		}
 
 		// Validate key is provided
 		if key == "" {
 			cmd.PrintErrf("Error: --key must be provided\n")
-			return
+			os.Exit(1)
 		}
 
 		// Resolve the vault URI
 		resolved, err := resolveUri(uri, vault)
 		if err != nil {
 			cmd.PrintErrf("Error resolving URI: %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 		url := resolved.Uri
@@ -120,26 +136,27 @@ Examples:
 			data, err := os.ReadFile(file)
 			if err != nil {
 				cmd.PrintErrf("Error reading file %s: %v\n", file, err)
-				return
+				os.Exit(1)
 			}
 			secretValue = string(data)
 		case varName != "":
 			secretValue = os.Getenv(varName)
 			if secretValue == "" {
 				cmd.PrintErrf("Warning: environment variable %s is empty or not set\n", varName)
+				os.Exit(1)
 			}
 		case stdin:
 			data, err := io.ReadAll(os.Stdin)
 			if err != nil {
 				cmd.PrintErrf("Error reading from stdin: %v\n", err)
-				return
+				os.Exit(1)
 			}
 			secretValue = string(data)
 		case generate:
 			secretValue, err = generateSecret(cmd)
 			if err != nil {
 				cmd.PrintErrf("Error generating secret: %v\n", err)
-				return
+				os.Exit(1)
 			}
 		}
 
@@ -147,14 +164,14 @@ Examples:
 		cred, err := getCredential(cmd)
 		if err != nil {
 			cmd.PrintErrf("Error getting credentials: %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 		// Create Key Vault client
 		client, err := azsecrets.NewClient(url, cred, nil)
 		if err != nil {
 			cmd.PrintErrf("Error creating Key Vault client: %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 		// Set the secret
@@ -164,11 +181,13 @@ Examples:
 
 		_, err = client.SetSecret(cmd.Context(), key, params, nil)
 		if err != nil {
-			cmd.PrintErrf("Error setting secret %s: %v\n", key, err)
+			cmd.PrintErrf("%s failed to update: %v\n", key, err)
+			os.Exit(1)
 			return
 		}
 
-		fmt.Printf("Successfully set secret: %s\n", key)
+		fmt.Printf("%s updated\n", key)
+		os.Exit(0)
 	},
 }
 
