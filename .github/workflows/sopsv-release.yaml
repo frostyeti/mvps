@@ -5,11 +5,13 @@ on:
   pull_request:
     paths:
       - "go/sopsv/**"
+      - ".github/workflows/sopsv-release.yaml"
     branches:
       - "*"
   push:
     paths:
       - "go/sopsv/**"
+      - ".github/workflows/sopsv-release.yaml"
     # run only against tags
     tags:
       - "go/sopsv/v*"
@@ -95,12 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ./go/sopsv/dist/${APP}-linux-amd64-v${VERSION}.tar.gz
-            ./go/sopsv/dist/${APP}-linux-arm64-v${VERSION}.tar.gz
-            ./go/sopsv/dist/${APP}-windows-amd64-v${VERSION}.zip
-            ./go/sopsv/dist/${APP}-windows-arm64-v${VERSION}.zip
-            ./go/sopsv/dist/${APP}-darwin-amd64-v${VERSION}.tar.gz
-            ./go/sopsv/dist/${APP}-darwin-arm64-v${VERSION}.tar.
+            ./go/sopsv/dist/sopsv-*
         if: ${{ github.ref_type == 'tag' }}
 
         
