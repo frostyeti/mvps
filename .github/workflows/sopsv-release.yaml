@@ -16,6 +16,10 @@ permissions:
   # issues: write
   # id-token: write
 
+env:
+  APP: sopsv
+
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
@@ -29,25 +33,65 @@ jobs:
         with:
           go-version: "1.25.4"
           
-      - name: Get Tag Version
+      - name: Get Version From Tag
         shell: bash
         run: |
           # go/sopsv/v0.0.0 
           # in bash trim the prefix to get the version only
           VERSION=${GITHUB_REF#refs/tags/go/sopsv/v}
           echo "$VERSION"
-          echo "GORELEASER_CURRENT_TAG=$VERSION" >> $GITHUB_ENV
-      # More assembly might be required: Docker logins, GPG, etc.
-      # It all depends on your needs.
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          # either 'goreleaser' (default) or 'goreleaser-pro'
-          distribution: goreleaser
-          # 'latest', 'nightly', or a semver
-          version: "~> v2"
-          args: release --clean --skip chocolatey
-          workdir: go/sopsv
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Build 
+        run: |
+          mkdir -p dist/linux/amd64
+          mkdir -p dist/linux/arm64
+          mkdir -p dist/windows/amd64
+          mkdir -p dist/windows/arm64
+          mkdir -p dist/darwin/amd64
+          mkdir -p dist/darwin/arm64
+
+          GOARCH=amd64
+          GOOS=linux
+
+          go build -o "dist/linux/amd64/${APP}" ./main.go
+          GOARCH=arm64
+          go build -o "dist/linux/arm64/${APP}" ./main.go
+
+          GOOS=windows
+          GOARCH=amd64
+          go build -o "dist/windows/amd64/${APP}.exe" ./main.go
+          GOARCH=arm64
+          go build -o "dist/windows/arm64/${APP}.exe" ./main.go
+          
+          GOOS=darwin
+          GOARCH=amd64
+          go build -o "dist/darwin/amd64/${APP}" ./main.go
+          GOARCH=arm64
+          go build -o "dist/darwin/arm64/${APP}" ./main.go            
+        working-directory: go/sopsv
+    
+      - name: Archive
+        run: |
+          cd dist
+          tar -czvf ${APP}-linux-amd64-v${VERSION}.tar.gz linux/amd64/${APP}
+          tar -czvf ${APP}-linux-arm64-v${VERSION}.tar.gz linux/arm64/${APP}
+          zip -r ${APP}-windows-amd64-v${VERSION}.zip windows/amd64/${APP}.exe
+          zip -r ${APP}-windows-arm64-v${VERSION}.zip windows/arm64/${APP}.exe
+          tar -czvf ${APP}-darwin-amd64-v${VERSION}.tar.gz darwin/amd64/${APP}
+          tar -czvf ${APP}-darwin-arm64-v${VERSION}.tar.gz darwin/arm64/${APP}          
+        working-directory: go/sopsv/
+        
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            ./go/sopsv/dist/${APP}-linux-amd64-v${VERSION}.tar.gz
+            ./go/sopsv/dist/${APP}-linux-arm64-v${VERSION}.tar.gz
+            ./go/sopsv/dist/${APP}-windows-amd64-v${VERSION}.zip
+            ./go/sopsv/dist/${APP}-windows-arm64-v${VERSION}.zip
+            ./go/sopsv/dist/${APP}-darwin-amd64-v${VERSION}.tar.gz
+            ./go/sopsv/dist/${APP}-darwin-arm64-v${VERSION}.tar.gz
+
         

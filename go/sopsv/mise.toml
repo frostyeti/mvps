@@ -4,3 +4,23 @@ run = """
 go build -o bin/sopsv ./main.go
 cp ./bin/sopsv $HOME/.local/bin/sopsv
 """
+
+[tasks.build-all]
+run = """
+GOOS=linux GOARCH=amd64 go build -o dist/linux/amd64/sopsv ./main.go
+GOOS=linux GOARCH=arm64 go build -o dist/linux/arm64/sopsv ./main.go
+GOOS=windows GOARCH=amd64 go build -o dist/windows/amd64/sopsv.exe ./main.go
+GOOS=windows GOARCH=arm64 go build -o dist/windows/arm64/sopsv.exe ./main.go
+GOOS=darwin GOARCH=amd64 go build -o dist/darwin/amd64/sopsv ./main.go
+GOOS=darwin GOARCH=arm64 go build -o dist/darwin/arm64/sopsv ./main.go
+"""
+
+[tasks.archive]
+run = """
+tar -czvf dist/sopsv-linux-amd64.tar.gz -C dist/linux/amd64 sopsv
+tar -czvf dist/sopsv-linux-arm64.tar.gz -C dist/linux/arm64 sopsv
+zip -j dist/sopsv-windows-amd64.zip dist/windows/amd64/sopsv.exe
+zip -j dist/sopsv-windows-arm64.zip dist/windows/arm64/sopsv.exe
+tar -czvf dist/sopsv-darwin-amd64.tar.gz -C dist/darwin/amd64 sopsv
+tar -czvf dist/sopsv-darwin-arm64.tar.gz -C dist/darwin/arm64 sopsv
+"""
