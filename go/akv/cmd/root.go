@@ -51,10 +51,10 @@ func init() {
 	akvDeviceCode := os.Getenv("AKV_USE_DEVICE_CODE") == "true"
 
 	vault := os.Getenv("AKV_VAULT_NAME")
-	flags.String("vault", vault, "The azure key vault name")
+	flags.StringP("vault", "v", vault, "The azure key vault name")
 
 	uri := os.Getenv("AKV_VAULT_URI")
-	flags.String("url", uri, "The azure key vault URL")
+	flags.StringP("url", "u", uri, "The azure key vault URL")
 
 	switch akvAuth {
 	case "identity":

@@ -75,12 +75,15 @@ Examples:
 
 		l := len(args)
 		if l > 0 {
+
 			if len(args[0]) > 0 {
-				key = args[0]
+				key2 := args[0]
+				key = key2
 			}
 
 			if l > 1 && len(args[1]) > 0 {
-				value = args[1]
+				value2 := args[1]
+				value = value2
 			}
 		}
 
