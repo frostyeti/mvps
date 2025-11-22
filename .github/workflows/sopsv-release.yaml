@@ -34,7 +34,7 @@ jobs:
         run: |
           # go/sopsv/v0.0.0 
           # in bash trim the prefix to get the version only
-          VERSION=${GITHUB_REF#go/sopsv/v}
+          VERSION=${GITHUB_REF#refs/tags/go/sopsv/v}
           echo "$VERSION"
           echo "GORELEASER_CURRENT_TAG=$VERSION" >> $GITHUB_ENV
       # More assembly might be required: Docker logins, GPG, etc.
