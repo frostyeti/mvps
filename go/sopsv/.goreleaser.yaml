@@ -13,7 +13,6 @@ builds:
     hooks:
       pre: go mod tidy
       post: go mod tidy
-      
 
 checksum:
   # You can change the name of the checksums file.
