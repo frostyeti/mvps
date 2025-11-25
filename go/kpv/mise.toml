@@ -1,0 +1,27 @@
+
+[tasks.build]
+run = """
+go build -o bin/kpv ./main.go
+cp ./bin/kpv $HOME/.local/bin/kpv
+"""
+
+[tasks.build-all]
+run = """
+GOOS=linux GOARCH=amd64 go build -o dist/linux/amd64/kpv ./main.go
+GOOS=linux GOARCH=arm64 go build -o dist/linux/arm64/kpv ./main.go
+GOOS=windows GOARCH=amd64 go build -o dist/windows/amd64/kpv.exe ./main.go
+GOOS=windows GOARCH=arm64 go build -o dist/windows/arm64/kpv.exe ./main.go
+GOOS=darwin GOARCH=amd64 go build -o dist/darwin/amd64/kpv ./main.go
+GOOS=darwin GOARCH=arm64 go build -o dist/darwin/arm64/kpv ./main.go
+"""
+
+[tasks.archive]
+run = """
+tar -czvf dist/kpv-linux-amd64.tar.gz -C dist/linux/amd64 kpv
+tar -czvf dist/kpv-linux-arm64.tar.gz -C dist/linux/arm64 kpv
+zip -j dist/kpv-windows-amd64.zip dist/windows/amd64/kpv.exe
+zip -j dist/kpv-windows-arm64.zip dist/windows/arm64/kpv.exe
+tar -czvf dist/kpv-darwin-amd64.tar.gz -C dist/darwin/amd64 kpv
+tar -czvf dist/kpv-darwin-arm64.tar.gz -C dist/darwin/arm64 kpv
+"""
+

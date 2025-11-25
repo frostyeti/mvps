@@ -38,7 +38,7 @@ func toScreamingSnakeCase(input string) string {
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get",
+	Use:   "get <key>...",
 	Short: "Get one or more secrets from KeePass vault",
 	Long: `Get one or more secrets from a KeePass vault.
 
@@ -61,6 +61,10 @@ Examples:
 	Run: func(cmd *cobra.Command, args []string) {
 		keys, _ := cmd.Flags().GetStringSlice("key")
 		format, _ := cmd.Flags().GetString("format")
+
+		if len(args) > 0 {
+			keys = append(keys, args...)
+		}
 
 		if format == "" {
 			format = "text"
@@ -130,7 +134,5 @@ func init() {
 	rootCmd.AddCommand(getCmd)
 
 	getCmd.Flags().StringSliceP("key", "k", []string{}, "Name of secret(s) to get (can be specified multiple times)")
-	getCmd.MarkFlagRequired("key")
-
 	getCmd.Flags().StringP("format", "f", "text", "Output format (text, json, sh, bash, zsh, powershell, pwsh, dotenv)")
 }

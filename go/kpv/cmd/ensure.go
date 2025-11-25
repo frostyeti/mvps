@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/frostyeti/mvps/go/keepass"
 	"github.com/spf13/cobra"
@@ -12,7 +13,7 @@ import (
 
 // ensureCmd represents the ensure command
 var ensureCmd = &cobra.Command{
-	Use:   "ensure",
+	Use:   "ensure <key>",
 	Short: "Ensure a secret exists in KeePass vault, creating it if needed",
 	Long: `Get a secret from KeePass vault, or create it if it doesn't exist.
 
@@ -47,16 +48,22 @@ Examples:
 	Run: func(cmd *cobra.Command, args []string) {
 		key, _ := cmd.Flags().GetString("key")
 
+		if len(args) > 0 {
+			if len(args[0]) > 0 {
+				key = args[0]
+			}
+		}
+
 		// Validate key is provided
 		if key == "" {
 			cmd.PrintErrf("Error: --key must be provided\n")
-			return
+			os.Exit(1)
 		}
 
 		kdbx, _, err := openKeePass(cmd)
 		if err != nil {
 			cmd.PrintErrf("Error opening KeePass vault: %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 		// Try to get the secret
@@ -64,14 +71,19 @@ Examples:
 		if entry != nil {
 			// Secret exists, return its value
 			fmt.Println(entry.GetPassword())
-			return
+			os.Exit(0)
 		}
 
 		// Secret doesn't exist, generate a new one
 		secretValue, err := generateSecret(cmd)
 		if err != nil {
 			cmd.PrintErrf("Error generating secret: %v\n", err)
-			return
+			os.Exit(1)
+		}
+
+		if secretValue == "" {
+			cmd.PrintErrf("Error: generated secret is empty\n")
+			os.Exit(1)
 		}
 
 		// Set the secret
@@ -82,11 +94,12 @@ Examples:
 		err = kdbx.Save()
 		if err != nil {
 			cmd.PrintErrf("Error saving KeePass vault: %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 		// Return the generated value
 		fmt.Println(secretValue)
+		os.Exit(0)
 	},
 }
 
@@ -94,7 +107,6 @@ func init() {
 	rootCmd.AddCommand(ensureCmd)
 
 	ensureCmd.Flags().StringP("key", "k", "", "The name of the secret to ensure (required)")
-	ensureCmd.MarkFlagRequired("key")
 
 	// Generation options (same as set command)
 	ensureCmd.Flags().Int("size", 16, "Size of the generated secret in characters")

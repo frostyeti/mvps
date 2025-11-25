@@ -15,7 +15,7 @@ import (
 
 // setCmd represents the set command
 var setCmd = &cobra.Command{
-	Use:   "set",
+	Use:   "set [<key>] [<value>]",
 	Short: "Set a secret in KeePass vault",
 	Long: `Set a single secret value in a KeePass vault.
 
@@ -62,6 +62,18 @@ Examples:
 		stdin, _ := cmd.Flags().GetBool("stdin")
 		generate, _ := cmd.Flags().GetBool("generate")
 
+		l := len(args)
+
+		if l > 0 {
+			if len(args[0]) > 0 {
+				key = args[0]
+			}
+
+			if l > 1 && (len(args[1]) > 0) {
+				value = args[1]
+			}
+		}
+
 		// Validate that exactly one input method is specified
 		inputMethods := 0
 		if value != "" {
@@ -76,13 +88,9 @@ Examples:
 		if stdin {
 			inputMethods++
 		}
-		if generate {
-			inputMethods++
-		}
 
 		if inputMethods == 0 {
-			cmd.PrintErrf("Error: must specify exactly one of --value, --file, --var, --stdin, or --generate\n")
-			return
+			generate = true
 		}
 
 		if inputMethods > 1 {
@@ -130,6 +138,10 @@ Examples:
 			secretValue, err = generateSecret(cmd)
 			if err != nil {
 				cmd.PrintErrf("Error generating secret: %v\n", err)
+				return
+			}
+			if len(secretValue) == 0 {
+				cmd.PrintErrf("Error generating secret: generated value is empty\n")
 				return
 			}
 		}
@@ -181,6 +193,7 @@ func generateSecret(cmd *cobra.Command) (string, error) {
 	}
 
 	opts := builder.Build()
+
 	return opts.Generate()
 }
 
@@ -188,7 +201,6 @@ func init() {
 	rootCmd.AddCommand(setCmd)
 
 	setCmd.Flags().StringP("key", "k", "", "The name of the secret to set (required)")
-	setCmd.MarkFlagRequired("key")
 
 	setCmd.Flags().String("value", "", "The secret value (exclusive with --file, --var, --stdin, --generate)")
 	setCmd.Flags().String("file", "", "Path to file containing the secret value (exclusive with --value, --var, --stdin, --generate)")

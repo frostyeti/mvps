@@ -123,7 +123,7 @@ func getPassword(cmd *cobra.Command, vaultPath string) (*string, error) {
 	// Try to get from OS keyring
 	kr, err := openKeyring()
 	if err == nil {
-		item, err := kr.Get(vaultPath)
+		item, err := kr.Get("kpv://" + vaultPath)
 		if err == nil {
 			pwd := string(item.Data)
 			return &pwd, nil
@@ -148,7 +148,9 @@ func getPassword(cmd *cobra.Command, vaultPath string) (*string, error) {
 
 func openKeyring() (keyring.Keyring, error) {
 	kr, err := keyring.Open(keyring.Config{
-		ServiceName: "kpv",
+		ServiceName:             "kpv",
+		LibSecretCollectionName: "login",
+		KeychainName:            "login",
 		AllowedBackends: []keyring.BackendType{
 			keyring.KeychainBackend,
 			keyring.WinCredBackend,

@@ -196,12 +196,26 @@ func (options *Options) GenerateBytes() ([]byte, error) {
 }
 
 func (options *Options) GenerateRunes() ([]rune, error) {
+	if options == nil {
+		options = &Options{
+			Size:    16,
+			Lower:   true,
+			Upper:   true,
+			Digits:  true,
+			Retries: 100,
+		}
+	}
+
 	if options.Validator == nil {
 		options.Validator = defaultValidator(*options)
 	}
 
 	if options.Size <= 0 {
 		options.Size = 16
+	}
+
+	if options.Retries <= 0 {
+		options.Retries = 100
 	}
 
 	var chars string
@@ -223,7 +237,7 @@ func (options *Options) GenerateRunes() ([]rune, error) {
 			chars += "@_-^+=|{}#~`"
 		}
 	}
-	result := make([]rune, 0)
+	result := make([]rune, options.Size)
 
 	if chars == "" {
 		return result, errors.New("no character sets selected")
@@ -235,10 +249,10 @@ func (options *Options) GenerateRunes() ([]rune, error) {
 
 	charRunes := []rune(chars)
 	for i := 0; i < options.Retries; i++ {
-		// use crypto/rand to generate secure random characters
-		result := make([]rune, options.Size)
-		for i := range result {
-			index, finalError := rand.Int(rand.Reader, big.NewInt(int64(len(charRunes))))
+		// use crypto/rand to generate secure random
+		max := big.NewInt(int64(len(charRunes)))
+		for i := 0; i < int(options.Size); i++ {
+			index, finalError := rand.Int(rand.Reader, max)
 			if finalError != nil {
 				continue
 			}

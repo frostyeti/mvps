@@ -158,7 +158,7 @@ Examples:
 			kr, err := openKeyring()
 			if err == nil {
 				err = kr.Set(keyring.Item{
-					Key:  vaultPath,
+					Key:  "kpv://" + vaultPath,
 					Data: []byte(passwordToSave),
 				})
 				if err != nil {
@@ -190,8 +190,20 @@ Examples:
 				}
 			}
 		} else {
-			fmt.Println("\nNote: You provided a custom password. It has not been saved to the keyring or key file.")
-			fmt.Println("Make sure to remember or securely store your password.")
+			kr, err := openKeyring()
+			if err == nil {
+				err = kr.Set(keyring.Item{
+					Key:  "kpv://" + vaultPath,
+					Data: []byte(passwordToSave),
+				})
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Warning: could not save password to OS keyring: %v\n", err)
+				} else {
+					fmt.Printf("Password saved to OS keyring (service: kpv, key: %s)\n", "kpv://"+vaultPath)
+				}
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: could not store password to OS keyring: %v\n", err)
+			}
 		}
 	},
 }
